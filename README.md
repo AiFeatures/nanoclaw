@@ -1,210 +1,130 @@
-<p align="center">
-  <img src="assets/nanoclaw-logo.png" alt="NanoClaw" width="400">
-</p>
+# NanoClaw
 
-<p align="center">
-  An AI assistant that runs agents securely in their own containers. Lightweight, built to be easily understood and completely customized for your needs.
-</p>
+AI assistant that runs Claude agents securely in isolated Linux containers.
 
-<p align="center">
-  <a href="https://nanoclaw.dev">nanoclaw.dev</a>&nbsp; • &nbsp;
-  <a href="README_zh.md">中文</a>&nbsp; • &nbsp;
-  <a href="README_ja.md">日本語</a>&nbsp; • &nbsp;
-  <a href="https://discord.gg/VDdww8qS42"><img src="https://img.shields.io/discord/1470188214710046894?label=Discord&logo=discord&v=2" alt="Discord" valign="middle"></a>&nbsp; • &nbsp;
-  <a href="repo-tokens"><img src="repo-tokens/badge.svg" alt="34.9k tokens, 17% of context window" valign="middle"></a>
-</p>
+> Fork of [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw), maintained by AiFeatures.
+> Upstream sync is managed via [Ai-road-4-You/fork-sync](https://github.com/Ai-road-4-You/fork-sync).
 
----
+## Why NanoClaw
 
-## Why I Built NanoClaw
+NanoClaw provides the same core functionality as [OpenClaw](https://github.com/openclaw/ a personal AI assistant connected to messaging  but in a codebase small enough to audit and understand. Agents run in their own Linux containers with filesystem isolation, not merely behind application-level permission checks. One process, a handful of source files, and no microservices.channels openclaw) 
 
-[OpenClaw](https://github.com/openclaw/openclaw) is an impressive project, but I wouldn't have been able to sleep if I had given complex software I didn't understand full access to my life. OpenClaw has nearly half a million lines of code, 53 config files, and 70+ dependencies. Its security is at the application level (allowlists, pairing codes) rather than true OS-level isolation. Everything runs in one Node process with shared memory.
+## Status
 
-NanoClaw provides that same core functionality, but in a codebase small enough to understand: one process and a handful of files. Claude agents run in their own Linux containers with filesystem isolation, not merely behind permission checks.
+| Field | Value |
+|-------|-------|
+| Version | 1.2.25 |
+| Runtime | Node.js 20+ |
+| Stability | Active development |
+| Upstream | [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) |
 
 ## Quick Start
 
 ```bash
-gh repo fork qwibitai/nanoclaw --clone
+git clone https://github.com/AiFeatures/nanoclaw.git
 cd nanoclaw
+npm install
+npm run build
+```
+
+To configure channels and services interactively, open [Claude Code](https://claude.ai/download) and run the `/setup` skill:
+
+```bash
 claude
+# inside the Claude Code prompt:
+/setup
 ```
 
-<details>
-<summary>Without GitHub CLI</summary>
+> Commands prefixed with `/` (like `/setup`, `/add-whatsapp`) are [Claude Code skills](https://code.claude.com/docs/en/skills). Type them inside the `claude` CLI prompt, not in your regular terminal.
 
-1. Fork [qwibitai/nanoclaw](https://github.com/qwibitai/nanoclaw) on GitHub (click the Fork button)
-2. `git clone https://github.com/<your-username>/nanoclaw.git`
-3. `cd nanoclaw`
-4. `claude`
+## Features
 
-</details>
-
-Then run `/setup`. Claude Code handles everything: dependencies, authentication, container setup and service configuration.
-
-> **Note:** Commands prefixed with `/` (like `/setup`, `/add-whatsapp`) are [Claude Code skills](https://code.claude.com/docs/en/skills). Type them inside the `claude` CLI prompt, not in your regular terminal. If you don't have Claude Code installed, get it at [claude.com/product/claude-code](https://claude.com/product/claude-code).
-
-## Philosophy
-
-**Small enough to understand.** One process, a few source files and no microservices. If you want to understand the full NanoClaw codebase, just ask Claude Code to walk you through it.
-
-**Secure by isolation.** Agents run in Linux containers (Apple Container on macOS, or Docker) and they can only see what's explicitly mounted. Bash access is safe because commands run inside the container, not on your host.
-
-**Built for the individual user.** NanoClaw isn't a monolithic framework; it's software that fits each user's exact needs. Instead of becoming bloatware, NanoClaw is designed to be bespoke. You make your own fork and have Claude Code modify it to match your needs.
-
-**Customization = code changes.** No configuration sprawl. Want different behavior? Modify the code. The codebase is small enough that it's safe to make changes.
-
-**AI-native.**
-- No installation wizard; Claude Code guides setup.
-- No monitoring dashboard; ask Claude what's happening.
-- No debugging tools; describe the problem and Claude fixes it.
-
-**Skills over features.** Instead of adding features (e.g. support for Telegram) to the codebase, contributors submit [claude code skills](https://code.claude.com/docs/en/skills) like `/add-telegram` that transform your fork. You end up with clean code that does exactly what you need.
-
-**Best harness, best model.** NanoClaw runs on the Claude Agent SDK, which means you're running Claude Code directly. Claude Code is highly capable and its coding and problem-solving capabilities allow it to modify and expand NanoClaw and tailor it to each user.
-
-## What It Supports
-
-- **Multi-channel messaging** - Talk to your assistant from WhatsApp, Telegram, Discord, Slack, or Gmail. Add channels with skills like `/add-whatsapp` or `/add-telegram`. Run one or many at the same time.
-- **Isolated group context** - Each group has its own `CLAUDE.md` memory, isolated filesystem, and runs in its own container sandbox with only that filesystem mounted to it.
-- **Main channel** - Your private channel (self-chat) for admin control; every group is completely isolated
-- **Scheduled tasks** - Recurring jobs that run Claude and can message you back
-- **Web access** - Search and fetch content from the Web
-- **Container isolation** - Agents are sandboxed in Docker (macOS/Linux), [Docker Sandboxes](docs/docker-sandboxes.md) (micro VM isolation), or Apple Container (macOS)
-- **Agent Swarms** - Spin up teams of specialized agents that collaborate on complex tasks
-- **Optional integrations** - Add Gmail (`/add-gmail`) and more via skills
-
-## Usage
-
-Talk to your assistant with the trigger word (default: `@Andy`):
-
-```
-@Andy send an overview of the sales pipeline every weekday morning at 9am (has access to my Obsidian vault folder)
-@Andy review the git history for the past week each Friday and update the README if there's drift
-@Andy every Monday at 8am, compile news on AI developments from Hacker News and TechCrunch and message me a briefing
-```
-
-From the main channel (your self-chat), you can manage groups and tasks:
-```
-@Andy list all scheduled tasks across groups
-@Andy pause the Monday briefing task
-@Andy join the Family Chat group
-```
-
-## Customizing
-
-NanoClaw doesn't use configuration files. To make changes, just tell Claude Code what you want:
-
-- "Change the trigger word to @Bob"
-- "Remember in the future to make responses shorter and more direct"
-- "Add a custom greeting when I say good morning"
-- "Store conversation summaries weekly"
-
-Or run `/customize` for guided changes.
-
-The codebase is small enough that Claude can safely modify it.
-
-## Contributing
-
-**Don't add features. Add skills.**
-
-If you want to add Telegram support, don't create a PR that adds Telegram to the core codebase. Instead, fork NanoClaw, make the code changes on a branch, and open a PR. We'll create a `skill/telegram` branch from your PR that other users can merge into their fork.
-
-Users then run `/add-telegram` on their fork and get clean code that does exactly what they need, not a bloated system trying to support every use case.
-
-### RFS (Request for Skills)
-
-Skills we'd like to see:
-
-**Communication Channels**
-- `/add-signal` - Add Signal as a channel
-
-## Requirements
-
-- macOS or Linux
-- Node.js 20+
-- [Claude Code](https://claude.ai/download)
-- [Apple Container](https://github.com/apple/container) (macOS) or [Docker](https://docker.com/products/docker-desktop) (macOS/Linux)
+- **Multi-channel  WhatsApp, Telegram, Discord, Slack, Gmail. Add channels via skills (`/add-whatsapp`, `/add-telegram`, etc.).messaging** 
+- **Container  Agents run in Docker, [Docker Sandboxes](docs/docker-sandboxes.md) (micro-VM), or [Apple Container](https://github.com/apple/container) (macOS).isolation** 
+- **Per-group  Each group has its own `CLAUDE.md`, isolated filesystem, and container sandbox.memory** 
+- **Scheduled  Recurring jobs that run Claude and message you back.tasks** 
+- **Agent  Teams of specialized agents that collaborate on complex tasks.Swarms** 
 
 ## Architecture
 
 ```
-Channels --> SQLite --> Polling loop --> Container (Claude Agent SDK) --> Response
+        Container (        ResponseClaude Agent SDK)         Polling loop         SQLite Channels 
 ```
 
-Single Node.js process. Channels are added via skills and self-register at startup — the orchestrator connects whichever ones have credentials present. Agents execute in isolated Linux containers with filesystem isolation. Only mounted directories are accessible. Per-group message queue with concurrency control. IPC via filesystem.
-
-For the full architecture details, see [docs/SPEC.md](docs/SPEC.md).
+Single Node.js process. Channels self-register at  the orchestrator connects whichever ones have credentials present. Agents execute in isolated Linux containers with only mounted directories accessible. Per-group message queue with concurrency control. IPC via filesystem.startup 
 
 Key files:
-- `src/index.ts` - Orchestrator: state, message loop, agent invocation
-- `src/channels/registry.ts` - Channel registry (self-registration at startup)
-- `src/ipc.ts` - IPC watcher and task processing
-- `src/router.ts` - Message formatting and outbound routing
-- `src/group-queue.ts` - Per-group queue with global concurrency limit
-- `src/container-runner.ts` - Spawns streaming agent containers
-- `src/task-scheduler.ts` - Runs scheduled tasks
-- `src/db.ts` - SQLite operations (messages, groups, sessions, state)
-- `groups/*/CLAUDE.md` - Per-group memory
 
-## FAQ
+| Path | Purpose |
+|------|---------|
+| `src/index.ts` | Orchestrator: state, message loop, agent invocation |
+| `src/channels/registry.ts` | Channel registry (self-registration) |
+| `src/container-runner.ts` | Spawns streaming agent containers |
+| `src/router.ts` | Message formatting and outbound routing |
+| `src/db.ts` | SQLite operations |
+| `src/task-scheduler.ts` | Scheduled task runner |
+| `groups/*/CLAUDE.md` | Per-group memory (isolated) |
 
-**Why Docker?**
+**Container build target:** The agent container image is defined at `container/Dockerfile` and built with `./container/build.sh`. See [docs/SPEC.md](docs/SPEC.md) for the full architecture.
 
-Docker provides cross-platform support (macOS, Linux and even Windows via WSL2) and a mature ecosystem. On macOS, you can optionally switch to Apple Container via `/convert-to-apple-container` for a lighter-weight native runtime. For additional isolation, [Docker Sandboxes](docs/docker-sandboxes.md) run each container inside a micro VM.
+## Development
 
-**Can I run this on Linux?**
+### Prerequisites
 
-Yes. Docker is the default runtime and works on both macOS and Linux. Just run `/setup`.
+- macOS or Linux
+- Node.js 20+
+- [Docker](https://docker.com/products/docker-desktop) or [Apple Container](https://github.com/apple/container) (macOS)
 
-**Is this secure?**
-
-Agents run in containers, not behind application-level permission checks. They can only access explicitly mounted directories. You should still review what you're running, but the codebase is small enough that you actually can. See [docs/SECURITY.md](docs/SECURITY.md) for the full security model.
-
-**Why no configuration files?**
-
-We don't want configuration sprawl. Every user should customize NanoClaw so that the code does exactly what they want, rather than configuring a generic system. If you prefer having config files, you can tell Claude to add them.
-
-**Can I use third-party or open-source models?**
-
-Yes. NanoClaw supports any Claude API-compatible model endpoint. Set these environment variables in your `.env` file:
+### Commands
 
 ```bash
-ANTHROPIC_BASE_URL=https://your-api-endpoint.com
-ANTHROPIC_AUTH_TOKEN=your-token-here
+npm run build          # Compile TypeScript
+npm run dev            # Run with hot reload (tsx)
+npm run typecheck      # Type-check without emitting
+npm run lint           # ESLint
+npm run lint:fix       # ESLint with auto-fix
+npm run format:check   # Prettier check
+npm run format         # Prettier write
+npm test               # Run tests (vitest)
+npm run test:watch     # Run tests in watch mode
 ```
 
-This allows you to use:
-- Local models via [Ollama](https://ollama.ai) with an API proxy
-- Open-source models hosted on [Together AI](https://together.ai), [Fireworks](https://fireworks.ai), etc.
-- Custom model deployments with Anthropic-compatible APIs
+### Container
 
-Note: The model must support the Anthropic API format for best compatibility.
+```bash
+./container/build.sh   # Build the agent container image
+```
 
-**How do I debug issues?**
+## Deployment
 
-Ask Claude Code. "Why isn't the scheduler running?" "What's in the recent logs?" "Why did this message not get a response?" That's the AI-native approach that underlies NanoClaw.
+CI is provided by the repository workflows in `.github/workflows/`. For enterprise deployments, reference the shared reusable workflows:
 
-**Why isn't the setup working for me?**
+```yaml
+uses: Ai-road-4-You/enterprise-ci-cd/.github/workflows/ci-node.yml@v1
+```
 
-If you have issues, during setup, Claude will try to dynamically fix them. If that doesn't work, run `claude`, then run `/debug`. If Claude finds an issue that is likely affecting other users, open a PR to modify the setup SKILL.md.
+```yaml
+uses: Ai-road-4-You/enterprise-ci-cd/.github/workflows/release.yml@v1
+with:
+  tags-override: latest
+```
 
-**What changes will be accepted into the codebase?**
+### Service Management
 
-Only security fixes, bug fixes, and clear improvements will be accepted to the base configuration. That's all.
+```bash
+# macOS (launchd)
+launchctl load ~/Library/LaunchAgents/com.nanoclaw.plist
+launchctl kickstart -k gui/$(id -u)/com.nanoclaw    # restart
 
-Everything else (new capabilities, OS compatibility, hardware support, enhancements) should be contributed as skills.
+# Linux (systemd)
+systemctl --user start nanoclaw
+systemctl --user restart nanoclaw
+```
 
-This keeps the base system minimal and lets every user customize their installation without inheriting features they don't want.
+## Contributing
 
-## Community
-
-Questions? Ideas? [Join the Discord](https://discord.gg/VDdww8qS42).
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for breaking changes and migration notes.
+See [Ai-road-4-You/governance](https://github.com/Ai-road-4-You/governance) for contribution guidelines and standards.
 
 ## License
 
-MIT
+[MIT](LICENSE)
