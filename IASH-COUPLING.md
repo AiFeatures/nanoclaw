@@ -1,6 +1,8 @@
+> Note: previously AGENT-HUB-COUPLING.md. Renamed 2026-04-22 for clarity — iAsh is the canonical repo name (renamed from agent-hub in April 2026).
+
 # Agent-Hub Coupling
 
-> This repository is **coupled to iAsh (agent-hub)** and registered in `iAsh/data/agents/topology.json`.
+> This repository is **coupled to iAsh (iAsh)** and registered in `iAsh/data/agents/topology.json`.
 
 ## Coupling Configuration
 
@@ -16,12 +18,12 @@ Add the following to your `.env` file:
 
 ```bash
 AGENT_HUB_URL=http://localhost:5000
-# For production: https://agent-hub.iaify.se
+# For production: https://iAsh.iaify.se
 ```
 
 ## Registering at Runtime
 
-On startup, this service should register itself with agent-hub:
+On startup, this service should register itself with iAsh:
 
 ```python
 # Python example
@@ -34,8 +36,8 @@ requests.post(
 
 ```typescript
 // TypeScript example
-import { AgentHubClient } from '@agent-hub/sdk';
-const hub = new AgentHubClient(process.env.AGENT_HUB_URL);
+import { iAshClient } from '@iAsh/sdk';
+const hub = new iAshClient(process.env.AGENT_HUB_URL);
 await hub.register({ repo: '<this-repo>', health: '/api/health' });
 ```
 
@@ -47,5 +49,5 @@ await hub.register({ repo: '<this-repo>', health: '/api/health' });
 
 ## See Also
 
-- [agent-hub/config/coupled-repos.json](https://github.com/AiFeatures/iAsh/blob/main/config/coupled-repos.json)
+- [iAsh/config/coupled-repos.json](https://github.com/AiFeatures/iAsh/blob/main/config/coupled-repos.json)
 - [Enterprise governance](https://github.com/Ai-road-4-You/governance)
