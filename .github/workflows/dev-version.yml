@@ -1,11 +1,8 @@
-name: Dev version
+name: Dev Version
 
 on:
   push:
     branches-ignore: [main, master]
-
-permissions:
-  contents: write
 
 jobs:
   dev-version:
