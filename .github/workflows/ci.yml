@@ -1,17 +1,12 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
   # A post-merge run on main, so main itself carries a verdict and not only the
   # pull requests that fed it. Nothing below reads the pull_request payload.
   push:
     branches: [main]
-
-permissions:
-  contents: read
 
 jobs:
   test:
